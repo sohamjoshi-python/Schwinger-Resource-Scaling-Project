@@ -1,1 +1,0 @@
-# Schwinger-Resource-Scaling-Project
