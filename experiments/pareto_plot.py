@@ -75,7 +75,7 @@ def main():
     plt.yscale("log")
     plt.xlabel("trainable parameters (cost)")
     plt.ylabel("test MSE  (log scale)")
-    plt.title("QCL accuracy vs cost for the Schwinger condensate (N=4)")
+    plt.title("QCL accuracy vs cost for the SU(2) QCD2 (N=4)")
     plt.legend()
     plt.grid(True, which="both", alpha=0.3)
     plt.tight_layout()

@@ -1,25 +1,31 @@
 """Build (mass, condensate) datasets by exact diagonalization.
 Migrated from test.ipynb (get_chiral_based_on_m / build_dataset).
 """
+import sys
+from pathlib import Path
 import numpy as np
-from .hamiltonian import build_hamiltonian, chiral_condensate_op
+import matplotlib.pyplot as plt
+
+try:
+    from .hamiltonian import build_hamiltonian, condensate_op
+except ImportError:
+    # Support direct script execution: add project root to sys.path.
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from hamiltonian import build_hamiltonian, condensate_op
+
+def get_condensate_based_on_m(N, m, w=1.0, J=1/8):
+    H = build_hamiltonian(N, m=m, w=w, J=J)
+    evals, evecs = np.linalg.eigh(H)
+    gs = evecs[:, 0]                      
+    op = condensate_op(N, w=w)
+    return np.real(gs.conj() @ op @ gs)
 
 
-def get_chiral_based_on_m(N, m, a=1, g=1):
-    """Exact chiral condensate of the N-site ground state at mass m."""
-    H = build_hamiltonian(N, a=a, g=g, m=m, theta=0.0, boundary="open")
-    eigenvalues, P = np.linalg.eig(H)
-    ground_state_idx = np.argmin(eigenvalues)
-    ground_state_vector = P[:, ground_state_idx]
-    op = chiral_condensate_op(N)
-    expectation_value = np.vdot(ground_state_vector, op @ ground_state_vector)
-    return np.real(expectation_value)
-
-
-def build_dataset(N, m_max=2.0, num_points=31, m_min=0.1, a=1, g=1):
+def build_dataset(N, m_max=2.0, num_points=31, m_min=0.1, w=1.0, J=1/8):
     """Return a list of (m, condensate) pairs over the mass grid."""
     data = []
     for m in np.linspace(m_min, m_max, num_points):
-        chiral_value = get_chiral_based_on_m(N, m, a=a, g=g)
-        data.append((m, chiral_value))
+        condensate_value = get_condensate_based_on_m(N, m, w=w, J=J)
+        data.append((m, condensate_value))
     return data
+

@@ -26,7 +26,8 @@ from src.dataset import build_dataset
 from src.model import make_circuit, encode_linear
 from src.train import train, test_mse, count_trainable_params
 
-SYSTEM_SIZES = [4, 6, 8]      # physical lattice sites (= 2^N Hilbert space)
+#SYSTEM_SIZES = [4, 6, 8]      # physical lattice sites (= 2^N Hilbert space)
+SYSTEM_SIZES = [4, 6] 
 QUBITS = [2, 3, 4]            # MODEL qubit count (independent of N)
 LAYERS = [1, 2, 3, 4, 5]
 SEEDS = [0, 1, 2]
@@ -38,7 +39,7 @@ os.makedirs("results", exist_ok=True)
 rows = []
 
 for N in SYSTEM_SIZES:
-    print(f"\n=== building dataset for N={N} (Hilbert dim {2**N}) ===")
+    print(f"\n=== building dataset for N={N} (Hilbert dim {2**(2*N)}) ===")
     data = build_dataset(N, m_max=M_MAX, num_points=NUM_POINTS)
     training_data, testing_data = train_test_split(
         data, test_size=0.2, random_state=42
